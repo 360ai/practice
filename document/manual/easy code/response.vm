@@ -1,0 +1,25 @@
+$!init
+##导入宏定义
+$!define
+
+##保存文件（宏定义）
+#save("/model/response", "Response.java")
+
+##包路径（宏定义）
+#setPackageSuffix("model.response")
+
+##自动导入包（全局变量）
+$!autoImport
+import java.io.Serializable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
+public class $!{tableInfo.name}Response{
+#foreach($column in $tableInfo.fullColumn)
+    #if(${column.comment})@ApiModelProperty(value ="${column.comment}")#end
+
+private $!{tool.getClsNameByFullName($column.type)} $!{column.name};
+#end
+
+}

@@ -1,0 +1,41 @@
+##导入宏定义
+$!define
+
+##设置表后缀（宏定义）
+#setTableSuffix("Controller")
+
+##保存文件（宏定义）
+#save("/controller", "Controller.java")
+
+##包路径（宏定义）
+#setPackageSuffix("controller")
+
+##定义服务名
+#set($serviceName = $!tool.append($!tool.firstLowerCase($!tableInfo.name), "Service"))
+
+##定义实体对象名
+#set($entityName = $!tool.firstLowerCase($!tableInfo.name))
+
+
+import com.baomidou.mybatisplus.extension.api.ApiController;
+import io.swagger.annotations.Api;
+import $!{tableInfo.savePackageName}.domain.$!tableInfo.name;
+import $!{tableInfo.savePackageName}.service.$!{tableInfo.name}Service;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+
+##表注释（宏定义）
+#tableComment("表控制层")
+@RestController
+@RequestMapping("$!tool.firstLowerCase($!tableInfo.name)")
+@Api(value = "$!{tableInfo.name}",tags = "$!{tableInfo.comment}")
+@Slf4j
+public class $!{tableName} extends ApiController {
+/**
+* 服务对象
+*/
+@Autowired
+private $!{tableInfo.name}Service $!{serviceName};
+
+}

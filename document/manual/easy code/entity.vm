@@ -1,0 +1,61 @@
+$!init
+##导入宏定义
+$!define
+
+##保存文件（宏定义）
+#save("/domain", ".java")
+
+##包路径（宏定义）
+#setPackageSuffix("domain")
+
+##自动导入包（全局变量）
+$!autoImport
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+#if(${tableInfo.pkColumn.size()}!=0)
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+#end
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
+##表注释（宏定义）
+#tableComment("表实体类")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("$!{tableInfo.obj.name}")
+##public class $!{tableInfo.name} extends Model<$!{tableInfo.name}> {
+public class $!{tableInfo.name} implements Serializable {
+
+private static final long serialVersionUID =  $!{tool.serial()};
+
+#foreach($column in $tableInfo.fullColumn)
+    #if(${column.comment})
+    @ApiModelProperty(value ="${column.comment}")
+    #end
+    #foreach($columnPK in $tableInfo.pkColumn)
+        #if(${column.name}==${columnPK.name})
+        @TableId(type = IdType.AUTO)
+        #end
+        #break
+    #end
+private $!{tool.getClsNameByFullName($column.type)} $!{column.name};
+
+#end
+#foreach($column in $tableInfo.pkColumn)
+    ##    /**
+    ##     * 获取主键值
+    ##     *
+    ##     * @return 主键值
+    ##     */
+    ##    @Override
+    ##    protected Serializable pkVal() {
+    ##        return this.$!column.name;
+    ##    }
+    #break
+#end
+}
